@@ -1,0 +1,1691 @@
+@import 'tailwindcss';
+
+/* ---------- theme ---------- */
+:root[data-theme='dark'] {
+  --bg: #0d0d0c;
+  --fg: #ece7dc;
+  --muted: #8f8a7f;
+  --line: rgb(236 231 220 / 0.14);
+  --red: #e0343c;
+  --card: #161614;
+  --flap: #1d1d1b;
+  color-scheme: dark;
+}
+:root[data-theme='light'] {
+  --bg: #efeae0;
+  --fg: #141412;
+  --muted: #67625a;
+  --line: rgb(20 20 18 / 0.16);
+  --red: #c62a32;
+  --card: #e5dfd2;
+  --flap: #1d1d1b;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-red: var(--red);
+  --color-card: var(--card);
+  --font-display: 'Archivo Variable', 'Arial Narrow', sans-serif;
+  --font-serif: 'Shippori Mincho B1', 'Yu Mincho', serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* phones: no 300ms double-tap-zoom wait on rapid key taps (pinch zoom still works),
+     and no grey flash over the page when a tap lands on the 3D keyboard */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  overflow-x: clip;
+}
+::selection {
+  background: var(--red);
+  color: #fff;
+}
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* paper grain: static, printed feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme='light'] body::after {
+  opacity: 0.11;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- type ---------- */
+.h-name {
+  font-weight: 900;
+  font-stretch: 64%;
+  text-transform: uppercase;
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+  font-size: clamp(4.4rem, 13.5vw, 15rem);
+}
+.h-sec {
+  font-weight: 800;
+  font-stretch: 72%;
+  line-height: 0.92;
+  letter-spacing: -0.005em;
+  font-size: clamp(2.6rem, 6.4vw, 6.4rem);
+  text-wrap: balance;
+}
+.meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.jp {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.vertical {
+  writing-mode: vertical-rl;
+}
+
+/* the entry gate: the copy sits on the left, the sakura tree hangs from the top-right.
+   a scrim fades the background up from the left/bottom so the text keeps its contrast. */
+.gate-scrim {
+  background:
+    linear-gradient(105deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 62%, transparent) 30%, transparent 62%),
+    linear-gradient(0deg, var(--bg) 0%, transparent 34%);
+}
+[data-theme='dark'] .gate-scrim {
+  background:
+    linear-gradient(105deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 70%, transparent) 32%, transparent 64%),
+    linear-gradient(0deg, var(--bg) 0%, transparent 38%);
+}
+.body {
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: color-mix(in oklab, var(--fg) 82%, var(--bg));
+  text-wrap: pretty;
+}
+
+/* masked word reveal; split words are decorative, the sr-only copy is what is read */
+.words .w {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  vertical-align: top;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+.words .w > span {
+  display: inline-block;
+}
+
+/* text streaming in like a model response: words ease up out of a blur, overlapping, behind a gliding caret */
+.stream .w {
+  display: inline-block;
+  opacity: 0;
+}
+.stream[data-on='still'] .w {
+  opacity: 1;
+}
+.stream[data-on='go'] .w {
+  animation: stream-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--at) both;
+}
+@keyframes stream-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+.stream-caret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.55em;
+  height: 1.05em;
+  background: var(--red);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.stream-caret[data-state='wait'] {
+  opacity: 1;
+  animation: blink 1s steps(1) infinite;
+}
+/* solid while it types, as a real cursor is */
+.stream-caret[data-state='type'] {
+  opacity: 1;
+}
+/* a couple of blinks once the answer is in, then it steps away */
+.stream-caret[data-state='done'] {
+  animation: caret-end 1.6s steps(1) forwards;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes caret-end {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  25%,
+  75%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- nav ---------- */
+.nav {
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 0.4s,
+    border-color 0.4s,
+    padding 0.4s;
+}
+.nav.stuck {
+  background: color-mix(in oklab, var(--bg) 92%, transparent);
+  border-color: var(--line);
+  padding-block: 0.65rem;
+}
+
+/* ---------- keycap buttons ---------- */
+.key-btn {
+  --face: var(--card);
+  --ink: var(--fg);
+  --edge: color-mix(in oklab, var(--face) 60%, #000);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.2rem 0.8rem;
+  border-radius: 10px;
+  background: var(--face);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 4px 0 var(--edge),
+    0 6px 14px rgb(0 0 0 / 0.25);
+  transform: translateY(0);
+  transition:
+    transform 0.09s ease,
+    box-shadow 0.09s ease;
+}
+.key-btn:hover {
+  transform: translateY(-1px);
+}
+.key-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 0 0 var(--edge),
+    0 1px 4px rgb(0 0 0 / 0.25);
+}
+.key-btn.primary {
+  --face: var(--red);
+  --ink: #fff7f2;
+}
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+}
+
+/* tiny keycap with the tool's logo, next to its name in the keyboard readout */
+.tool-chip {
+  display: inline-grid;
+  flex: none;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0.28rem;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 -2px 0 rgb(0 0 0 / 0.22),
+    0 1px 2px rgb(0 0 0 / 0.25);
+}
+
+/* ---------- custom cursor ---------- */
+@media (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+}
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: #f1ede3;
+}
+.cursor-cross {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  translate: -50% -50%;
+}
+.cursor-cross::before,
+.cursor-cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.cursor-cross::before {
+  left: 6px;
+  top: 0;
+  width: 1px;
+  height: 13px;
+}
+.cursor-cross::after {
+  top: 6px;
+  left: 0;
+  height: 1px;
+  width: 13px;
+}
+.cursor-ring {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  translate: -50% -50%;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-radius 0.35s,
+    opacity 0.2s;
+}
+.cursor-ring span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.cursor.is-label .cursor-ring {
+  width: 74px;
+  height: 74px;
+}
+.cursor.is-label .cursor-ring span {
+  opacity: 1;
+}
+.cursor.is-hover .cursor-ring {
+  width: 54px;
+  height: 54px;
+}
+.cursor.is-out {
+  opacity: 0;
+}
+.cursor.is-down .cursor-ring {
+  width: 26px;
+  height: 26px;
+}
+
+/* ---------- split-flap ---------- */
+.flap {
+  --h: 1.18em;
+  position: relative;
+  display: inline-block;
+  width: 0.7em;
+  height: var(--h);
+  margin-right: 0.05em;
+  perspective: 3em;
+  color: #f1ede3;
+  font-variant-numeric: tabular-nums;
+}
+.flap .half {
+  position: absolute;
+  inset-inline: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--flap);
+  backface-visibility: hidden;
+}
+.flap .half > b {
+  display: block;
+  height: var(--h);
+  line-height: var(--h);
+  text-align: center;
+  font-weight: inherit;
+}
+.flap .top {
+  top: 0;
+  border-radius: 0.09em 0.09em 0 0;
+  transform-origin: 50% 100%;
+}
+.flap .bottom {
+  bottom: 0;
+  border-radius: 0 0 0.09em 0.09em;
+  transform-origin: 50% 0;
+}
+.flap .bottom > b {
+  transform: translateY(-50%);
+}
+.flap .top.flip {
+  animation: flap-top 0.05s var(--d, 0s) ease-in both;
+}
+.flap .bottom.flip {
+  animation: flap-bottom 0.05s calc(var(--d, 0s) + 0.05s) ease-out both;
+}
+.flap::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: calc(50% - 0.5px);
+  height: 1px;
+  background: rgb(0 0 0 / 0.55);
+}
+@keyframes flap-top {
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+@keyframes flap-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+}
+
+/* ---------- inline keyboard: on tall screens the board sits in the toolkit, edge to edge ---------- */
+.kb-inline {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  margin-top: 1.5rem;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ---------- key tag: the hovered key plants a little split-flap flag on itself ---------- */
+.key-tag {
+  --tag: #121211;
+  --pole: 40px; /* key centre to flag, written per frame from the 3D key */
+  --flag: 2.75rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+  /* once furled it's gone completely: no sliver of pole or shadow left where the last flag stood */
+  visibility: hidden;
+  transition: visibility 0s 0.25s;
+}
+.key-tag.on {
+  visibility: visible;
+  transition-delay: 0s;
+}
+.key-tag-pole {
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: 2px;
+  height: calc(var(--pole) + var(--flag));
+  border-radius: 2px;
+  background: var(--tag);
+  box-shadow: 1px 0 0 rgb(255 255 255 / 0.16);
+  transform-origin: 50% 100%;
+  scale: 1 0;
+  transition: scale 0.16s 0.06s ease-in;
+}
+/* where the pole meets the keycap */
+.key-tag-pole::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 12px;
+  height: 4px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.35);
+}
+.key-tag-card {
+  position: absolute;
+  left: 1px;
+  bottom: var(--pole);
+  height: var(--flag);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.75rem 0 0.42rem;
+  border-radius: 2px 10px 10px 2px;
+  background: var(--tag);
+  color: #f1ede3;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 18px 30px -14px rgb(0 0 0 / 0.6),
+    0 3px 8px rgb(0 0 0 / 0.22);
+  transform-origin: 0 50%;
+  /* furled against the pole; negative insets leave room for the shadow */
+  clip-path: inset(-12px 100% -40px -12px);
+  transition: clip-path 0.18s ease-in;
+}
+.key-tag.on .key-tag-pole {
+  scale: 1 1;
+  transition: scale 0.22s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+.key-tag.on .key-tag-card {
+  clip-path: inset(-12px -40px -40px -12px);
+  transition: clip-path 0.45s 0.1s cubic-bezier(0.2, 0.9, 0.25, 1);
+  animation: tag-wave 0.8s 0.1s cubic-bezier(0.3, 1.5, 0.45, 1) both;
+}
+/* near the right edge of the screen the flag flies the other way */
+.key-tag.flip .key-tag-card {
+  left: auto;
+  right: 1px;
+  border-radius: 10px 2px 2px 10px;
+  transform-origin: 100% 50%;
+  clip-path: inset(-12px -12px -40px 100%);
+}
+.key-tag.flip.on .key-tag-card {
+  clip-path: inset(-12px -12px -40px -40px);
+}
+@keyframes tag-wave {
+  from {
+    transform: skewY(7deg) scaleX(0.92);
+  }
+}
+.key-tag-chip {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0.34rem;
+  animation: chip-flip 0.22s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes chip-flip {
+  from {
+    transform: perspective(8rem) rotateX(-90deg);
+  }
+}
+.key-tag-name {
+  display: inline-flex;
+  font-size: 1.34rem;
+}
+.key-tag-name .flap {
+  width: 0.72em;
+}
+.key-tag-kana {
+  align-self: flex-start;
+  margin-top: 0.42rem;
+  font-size: 0.72rem;
+  color: #ef5a60;
+}
+/* a dark flag vanishes on the dark page, so there it turns bone-white; the flap tiles stay dark like a station board */
+[data-theme='dark'] .key-tag {
+  --tag: #e9e3d6;
+}
+[data-theme='dark'] .key-tag-pole {
+  box-shadow: 1px 0 0 rgb(0 0 0 / 0.35);
+}
+[data-theme='dark'] .key-tag-card {
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.12),
+    0 18px 30px -14px rgb(0 0 0 / 0.9),
+    0 3px 8px rgb(0 0 0 / 0.4);
+}
+[data-theme='dark'] .key-tag-kana {
+  color: #c62a32;
+}
+
+/* ---------- Eva-style episode title card ---------- */
+.title-card {
+  background: #0a0a09;
+  color: #f4efe6;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.title-card .t {
+  line-height: 0.92;
+  transform: scaleY(1.22);
+  transform-origin: left bottom;
+  letter-spacing: -0.01em;
+}
+
+/* hanko: the red name stamp on Japanese documents */
+.hanko {
+  display: inline-grid;
+  place-items: center;
+  writing-mode: vertical-rl;
+  padding: 0.35em 0.22em;
+  border: 0.12em solid var(--red);
+  border-radius: 0.18em;
+  color: var(--red);
+  font-family: var(--font-serif);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  rotate: -8deg;
+  opacity: 0.92;
+}
+
+/* ---------- trading card ---------- */
+.tcg {
+  perspective: 1200px;
+}
+.tcg-inner {
+  position: relative;
+  aspect-ratio: 5 / 7;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+}
+.tcg-inner.flipping {
+  transition: transform 0.8s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.tcg-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  border: 1px solid var(--line);
+}
+.tcg-back {
+  transform: rotateY(180deg);
+}
+.tcg-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background: linear-gradient(
+    115deg,
+    transparent calc(var(--sx, 50%) - 30%),
+    rgb(255 255 255 / 0.45) var(--sx, 50%),
+    transparent calc(var(--sx, 50%) + 30%)
+  );
+  opacity: var(--so, 0);
+  transition: opacity 0.3s;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ---------- systems: pipeline ---------- */
+.pipe-node {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  transition:
+    border-color 0.3s,
+    translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 64rem) {
+  .pipe-node {
+    min-height: 7.6rem;
+  }
+}
+.pipe-node.on {
+  border-color: var(--red);
+  translate: 0 -4px;
+}
+.pipe-node.side {
+  border-style: dashed;
+}
+.pipe-node.end {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+/* data flowing between stages: a dashed wire and a packet riding it.
+   Both move with transform only, so they run on the compositor and never repaint or relayout. */
+.pipe-link {
+  --len: 2.2rem;
+  position: relative;
+  flex: none;
+  align-self: center;
+  width: 9px;
+  height: var(--len);
+  overflow: hidden;
+  transform-origin: 50% 0;
+}
+.pipe-link::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: -8px; /* one dash period of slack, scrolled through and looped */
+  bottom: 0;
+  width: 1px;
+  background: repeating-linear-gradient(180deg, var(--muted) 0 4px, transparent 4px 8px);
+  background-size: 1px 8px;
+  animation: flow-y 0.8s linear infinite;
+}
+.pipe-link::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  background: var(--red);
+  animation: packet-y 2.4s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+  animation-delay: calc(var(--i, 0) * 0.4s);
+}
+@media (min-width: 64rem) {
+  .pipe-link:not(.v) {
+    --len: 2rem;
+    width: var(--len);
+    height: 9px;
+    transform-origin: 0 50%;
+  }
+  .pipe-link:not(.v)::before {
+    inset: 4px 0 auto -8px;
+    width: auto;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--muted) 0 4px, transparent 4px 8px);
+    background-size: 8px 1px;
+    animation-name: flow-x;
+  }
+  .pipe-link:not(.v)::after {
+    top: 1px;
+    animation-name: packet-x;
+  }
+}
+@media (min-width: 80rem) {
+  .pipe-link:not(.v) {
+    --len: 3.2rem;
+  }
+}
+@keyframes flow-y {
+  to {
+    transform: translateY(8px);
+  }
+}
+@keyframes flow-x {
+  to {
+    transform: translateX(8px);
+  }
+}
+@keyframes packet-y {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(var(--len) - 7px));
+    opacity: 0;
+  }
+}
+@keyframes packet-x {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(var(--len) - 7px));
+    opacity: 0;
+  }
+}
+
+/* ---------- systems: architecture decision records ---------- */
+.adr {
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  transition:
+    border-color 0.3s,
+    background-color 0.3s,
+    translate 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 48rem) {
+  .adr {
+    padding: 2rem;
+  }
+}
+.adr.on {
+  border-color: var(--red);
+  background: var(--card);
+  translate: 0 -4px;
+}
+.adr-result {
+  transition: color 0.3s;
+}
+.adr.on .adr-result {
+  color: var(--red);
+}
+
+/* ---------- hire: pull request ---------- */
+.pr-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: var(--red);
+  color: #fff7f2;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pr-status {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  border: 1.5px solid var(--muted);
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+.pr-status.running {
+  border-color: var(--line);
+  border-top-color: var(--red);
+  animation: spin 0.7s linear infinite;
+}
+.pr-status.passed {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff7f2;
+  animation: pop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.5);
+}
+@keyframes pop {
+  from {
+    scale: 0.3;
+  }
+}
+.pr-label {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--red) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--red) 8%, transparent);
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- contact: meishi cards ---------- */
+.meishi {
+  display: block;
+  width: 100%;
+  aspect-ratio: 91 / 55;
+  text-align: left;
+}
+.meishi-card {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.tone-red {
+  --m-bg: var(--red);
+  --m-ink: #fff7f2;
+  --m-edge: transparent;
+}
+.tone-ink {
+  --m-bg: var(--fg);
+  --m-ink: var(--bg);
+  --m-edge: transparent;
+  --m-jp: var(--red);
+}
+.tone-paper {
+  --m-bg: var(--card);
+  --m-ink: var(--fg);
+  --m-edge: var(--line);
+  --m-jp: var(--red);
+}
+/* the socials get traditional dyes close to their brand colours (profile.json `tone`):
+   常磐 evergreen, 藍 indigo, 銀鼠 silver-grey, 桔梗 bellflower */
+.tone-green {
+  --m-bg: #1d6a48;
+  --m-ink: #f3efe4;
+  --m-edge: transparent;
+}
+.tone-indigo {
+  --m-bg: #1a5c80;
+  --m-ink: #f3efe4;
+  --m-edge: transparent;
+}
+.tone-silver {
+  --m-bg: #b1b2b3;
+  --m-ink: #141412;
+  --m-edge: transparent;
+}
+.tone-violet {
+  --m-bg: #57549f;
+  --m-ink: #f3efe4;
+  --m-edge: transparent;
+}
+.m-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid var(--m-edge);
+  border-radius: 14px;
+  background: var(--m-bg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 18px 30px -18px rgb(0 0 0 / 0.55);
+  transition: box-shadow 0.5s;
+}
+.meishi:hover .m-face {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 46px 60px -28px rgb(0 0 0 / 0.6);
+}
+/* blind deboss: the logo is pressed into the stock in the card's own colour, the #engrave filter
+   shades the cut. A dropped-in image file gets a flat stamp look instead. */
+.m-logo {
+  position: absolute;
+  top: 50%;
+  right: 1.15rem;
+  height: 56%;
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  color: color-mix(in oklab, var(--m-bg), var(--m-ink) 7%);
+  object-fit: contain;
+}
+img.m-logo {
+  filter: grayscale(1);
+  opacity: 0.16;
+}
+.m-layer {
+  position: absolute;
+  inset-inline: 1.15rem;
+  color: var(--m-ink);
+  pointer-events: none;
+}
+.m-top {
+  top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0.75;
+  transform: translateZ(24px);
+}
+/* red kanji only where the stock is neutral; on a dyed card it would vanish */
+.m-top .jp {
+  color: var(--m-jp, var(--m-ink));
+}
+.m-mid {
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transform: translateY(-50%) translateZ(46px);
+}
+.m-name {
+  font-size: clamp(1.7rem, 2.5vw, 2.25rem);
+  font-weight: 850;
+  font-stretch: 72%;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.m-handle {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+}
+.m-foot {
+  bottom: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateZ(32px);
+}
+.m-arrow {
+  transition: rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.meishi:hover .m-arrow,
+.meishi:focus-visible .m-arrow {
+  rotate: 45deg;
+}
+.m-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent calc(var(--mx, 50%) - 28%), rgb(255 255 255 / 0.13) var(--mx, 50%), transparent calc(var(--mx, 50%) + 28%));
+  opacity: 0;
+  transform: translateZ(2px);
+  transition: opacity 0.4s;
+}
+.meishi:hover .m-sheen {
+  opacity: 1;
+}
+/* the 済 ("done") hanko thumps onto the card when the address is copied */
+.m-stamp {
+  position: absolute;
+  top: 16%;
+  right: 24%;
+  padding: 0.1em 0.12em;
+  border: 3px solid #fff7f2;
+  border-radius: 0.14em;
+  color: #fff7f2;
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateZ(60px) rotate(-12deg);
+  animation: stamp 0.45s cubic-bezier(0.2, 0.8, 0.2, 1.2) both;
+}
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: translateZ(60px) rotate(-12deg) scale(2.4);
+  }
+}
+.meishi-float {
+  animation: float 6s ease-in-out infinite;
+}
+.meishi-float:has(.meishi:hover) {
+  animation-play-state: paused;
+}
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: -0.4deg;
+  }
+  50% {
+    translate: 0 -8px;
+    rotate: 0.4deg;
+  }
+}
+
+/* ---------- music deck: a 90s Discman ----------
+   Folded, it is only the disc, parked on a screen edge; JS places it (transform) and slides the panel
+   out of it. Phones get a pocket-sized deck, tablets and up the full one.
+   --ov = how far the panel tucks under the disc */
+.deck {
+  --d: 4.75rem;
+  --ov: 1.1rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  width: var(--d);
+  height: var(--d);
+}
+.deck-disc {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  /* the disc is dragged, not scrolled through */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    scale 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.3s;
+}
+.deck-disc:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: -0.5rem;
+}
+.deck.held .deck-disc {
+  scale: 0.95;
+}
+/* picked up: it lifts off the page */
+.deck.dragging .deck-disc {
+  scale: 1.08;
+  filter: drop-shadow(0 16px 14px rgb(0 0 0 / 0.35));
+}
+.deck-body {
+  position: absolute;
+  left: calc(100% - var(--ov));
+  width: 11.5rem;
+  padding: 0.4rem 0.45rem 0.45rem 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--card) 100%, #fff 4%), var(--card));
+  box-shadow: 0 14px 34px -14px rgb(0 0 0 / 0.5);
+  transform-origin: 0 50%;
+  visibility: hidden;
+}
+/* parked on the right: the panel comes out the other way */
+.deck[data-side='l'] .deck-body {
+  left: auto;
+  right: calc(100% - var(--ov));
+  padding: 0.4rem 1.4rem 0.45rem 0.45rem;
+  transform-origin: 100% 50%;
+}
+/* reflective STN LCD with ghost segments behind the live digits */
+.lcd {
+  padding: 0.28rem 0.4rem 0.24rem;
+  border-radius: 5px;
+  background: #b9bba5;
+  color: #1b1d17;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lcd-num {
+  position: relative;
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+@media (min-width: 48rem) {
+  .deck {
+    --d: 9rem;
+    --ov: 1.6rem;
+  }
+  .deck-body {
+    width: 13.5rem;
+    padding: 0.6rem 0.65rem 0.6rem 1.9rem;
+    border-radius: 14px;
+  }
+  .deck[data-side='l'] .deck-body {
+    padding: 0.6rem 1.9rem 0.6rem 0.65rem;
+  }
+  .lcd {
+    padding: 0.4rem 0.55rem 0.35rem;
+    border-radius: 6px;
+    font-size: 0.6rem;
+  }
+  .lcd-num {
+    font-size: 0.92rem;
+  }
+}
+.lcd-num::before {
+  content: attr(data-ghost);
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+}
+.lcd-num > span {
+  position: relative;
+}
+.lcd-title {
+  margin-top: 0.1rem;
+  overflow: hidden;
+  white-space: pre;
+  font-size: 0.6rem;
+}
+@media (min-width: 48rem) {
+  .lcd-title {
+    margin-top: 0.15rem;
+    font-size: 0.68rem;
+  }
+}
+.lcd-title > span {
+  display: inline-block;
+}
+.lcd-title > .scroll {
+  animation: lcd-scroll 12s linear infinite;
+}
+@keyframes lcd-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.deck-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.45rem;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.66rem;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 3px 0 color-mix(in oklab, var(--bg) 55%, #000);
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s;
+}
+/* small buttons, finger-sized hit areas */
+.deck-btn::after {
+  content: '';
+  position: absolute;
+  inset: -0.5rem -0.19rem;
+}
+@media (min-width: 48rem) {
+  .deck-btn {
+    width: 2rem;
+    height: 1.75rem;
+    border-radius: 7px;
+    font-size: 0.75rem;
+  }
+}
+.deck-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 color-mix(in oklab, var(--bg) 55%, #000);
+}
+.deck-btn.primary {
+  width: 2.05rem;
+  background: var(--red);
+  color: #fff7f2;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.15),
+    0 3px 0 color-mix(in oklab, var(--red) 55%, #000);
+}
+@media (min-width: 48rem) {
+  .deck-btn.primary {
+    width: 2.4rem;
+  }
+}
+/* CSS disc for browsers without WebGL2 */
+.disc-flat {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--bg) 0 9%, rgb(255 255 255 / 0.5) 9% 10%, transparent 10% 17%, #c62a32 17% 34%, transparent 34%),
+    conic-gradient(from 20deg, #d9d9dc, #b9e0dd, #e6d3ea, #f1e7c4, #d9d9dc, #c6d6ee, #ecd0d4, #d9d9dc);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.35);
+}
+.disc-flat.has-cover {
+  background:
+    radial-gradient(circle, var(--bg) 0 9%, rgb(255 255 255 / 0.5) 9% 10%, transparent 10% 17%, rgb(255 255 255 / 0.4) 17% 17.6%, transparent 17.6%),
+    var(--cover) center / cover;
+}
+.disc-flat.spinning {
+  animation: spin 1.8s linear infinite;
+}
+/* the LCD shows the level while the volume moves */
+.lcd-vol {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+.lcd-vol .seg {
+  display: flex;
+  flex: 1;
+  gap: 2px;
+}
+.lcd-vol .seg i {
+  flex: 1;
+  height: 0.7em;
+  background: currentColor;
+  opacity: 0.12;
+}
+.lcd-vol .seg i.on {
+  opacity: 1;
+}
+/* volume: a fader with a red index line on the cap */
+.deck-vol {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.deck-vol input {
+  flex: 1;
+  min-width: 0;
+  height: 1.25rem;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  touch-action: none;
+}
+@media (min-width: 48rem) {
+  .deck-vol {
+    margin-top: 0.4rem;
+    font-size: 0.55rem;
+  }
+  .deck-vol input {
+    height: 1rem;
+  }
+}
+.deck-vol input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--red) var(--v), color-mix(in oklab, var(--fg) 16%, transparent) var(--v));
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.3);
+}
+.deck-vol input::-moz-range-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--red) var(--v), color-mix(in oklab, var(--fg) 16%, transparent) var(--v));
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.3);
+}
+.deck-vol input::-webkit-slider-thumb {
+  width: 0.62rem;
+  height: 0.95rem;
+  margin-top: calc(2px - 0.475rem);
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent 42%, var(--red) 42% 58%, transparent 58%), var(--bg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 2px 0 color-mix(in oklab, var(--bg) 55%, #000);
+}
+.deck-vol input::-moz-range-thumb {
+  width: 0.62rem;
+  height: 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent 42%, var(--red) 42% 58%, transparent 58%), var(--bg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 2px 0 color-mix(in oklab, var(--bg) 55%, #000);
+}
+.deck-vol input:focus-visible {
+  outline: none;
+}
+.deck-vol input:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+.deck-vol input:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* ---------- sound mixer: drops out of the nav's speaker ---------- */
+.mixer {
+  --cap: 0.9rem;
+  --h: 7rem;
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  /* right edge in line with the theme button's */
+  right: -3rem;
+  width: 17.5rem;
+  padding: 0.7rem 0.75rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--card) 100%, #fff 4%), var(--card));
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.55);
+  transform-origin: calc(100% - 4.25rem) 0;
+  visibility: hidden;
+  opacity: 0;
+}
+.mix-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mix-title,
+.mix-switch,
+.fader-name,
+.mix-foot {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.mix-title {
+  font-size: 0.6rem;
+}
+.mix-title .jp {
+  margin-left: 0.3em;
+  font-size: 0.8rem;
+}
+/* master switch */
+.mix-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.55rem;
+}
+.mix-switch i {
+  position: relative;
+  width: 1.9rem;
+  height: 1.05rem;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--fg) 14%, transparent);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: background-color 0.2s;
+}
+.mix-switch i::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: translate 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.mix-switch[aria-checked='true'] {
+  color: var(--fg);
+}
+.mix-switch[aria-checked='true'] i {
+  background: var(--red);
+}
+.mix-switch[aria-checked='true'] i::after {
+  translate: 0.85rem 0;
+  background: #fff7f2;
+}
+.mix-switch:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+  border-radius: 99px;
+}
+/* the faders sit in a recessed plate */
+.mix-desk {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 0.6rem;
+  padding: 0.55rem 0.2rem 0.5rem;
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--bg) 65%, var(--card));
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.3);
+  transition: opacity 0.25s;
+}
+.mixer[data-muted] .mix-desk {
+  opacity: 0.5;
+}
+.fader {
+  --k: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+.mix-val {
+  padding: 0.12rem 0.3rem 0.08rem;
+  border-radius: 4px;
+  white-space: pre;
+}
+.mix-val .lcd-num {
+  font-size: 0.66rem;
+}
+/* --v is the level (0..1), --k the run up when the panel opens */
+.fader-slot {
+  position: relative;
+  width: 100%;
+  height: var(--h);
+}
+/* the groove */
+.fader-slot::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(var(--cap) / 2);
+  bottom: calc(var(--cap) / 2);
+  width: 4px;
+  translate: -50% 0;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--fg) 16%, transparent);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.3);
+}
+/* the scale: eleven ticks, 0 to 100 */
+.fader-slot::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 1.3rem);
+  top: calc(var(--cap) / 2);
+  bottom: calc(var(--cap) / 2 - 1px);
+  width: 0.3rem;
+  background: linear-gradient(color-mix(in oklab, var(--fg) 28%, transparent) 1px, transparent 1px) 0 0 / 100% calc((100% - 1px) / 10) repeat-y;
+}
+.fader-fill {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--cap) / 2);
+  width: 4px;
+  height: calc((100% - var(--cap)) * var(--v) * var(--k));
+  translate: -50% 0;
+  border-radius: 4px;
+  background: var(--red);
+  pointer-events: none;
+}
+/* the cap: same as the Discman's fader, stood upright */
+.fader-cap {
+  position: absolute;
+  left: 50%;
+  bottom: calc((100% - var(--cap)) * var(--v) * var(--k));
+  width: 1.7rem;
+  height: var(--cap);
+  translate: -50% 0;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: linear-gradient(transparent 42%, var(--red) 42% 58%, transparent 58%), linear-gradient(color-mix(in oklab, var(--fg) 7%, var(--bg)), var(--bg));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 2px 0 color-mix(in oklab, var(--bg) 55%, #000),
+    0 5px 8px -3px rgb(0 0 0 / 0.4);
+  pointer-events: none;
+  transition: border-color 0.15s;
+}
+.fader-slot:hover .fader-cap {
+  border-color: color-mix(in oklab, var(--fg) 40%, transparent);
+}
+.fader-slot:has(input:focus-visible) .fader-cap {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mixer.glide .fader-cap,
+  .mixer.glide .fader-fill {
+    transition:
+      bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+/* the real slider: invisible, stood on end over the slot, its thumb the size of the cap so they line up */
+.fader-slot input {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--h);
+  height: 2.2rem;
+  margin: 0;
+  translate: -50% -50%;
+  rotate: -90deg;
+  appearance: none;
+  background: transparent;
+  opacity: 0;
+  touch-action: none;
+}
+.fader-slot input::-webkit-slider-runnable-track {
+  height: 100%;
+}
+.fader-slot input::-webkit-slider-thumb {
+  width: var(--cap);
+  height: 100%;
+  appearance: none;
+}
+.fader-slot input::-moz-range-track {
+  height: 100%;
+}
+.fader-slot input::-moz-range-thumb {
+  width: var(--cap);
+  height: 100%;
+  border: 0;
+}
+.fader-name {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  transition: color 0.15s;
+}
+.fader:hover .fader-name,
+.fader:has(:focus-visible) .fader-name {
+  color: var(--fg);
+}
+.mix-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.55rem;
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.mix-foot span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mix-foot button {
+  flex: none;
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.mix-foot button:hover {
+  color: var(--red);
+}
+
+/* ---------- episode hover preview ---------- */
+.preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: min(26vw, 360px);
+  aspect-ratio: 4 / 3;
+  pointer-events: none;
+  border-radius: 10px;
+  overflow: hidden;
+  opacity: 0;
+  scale: 0.85;
+  transition:
+    opacity 0.25s,
+    scale 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.35);
+}
+.preview.on {
+  opacity: 1;
+  scale: 1;
+}
+
+/* ---------- music bars ---------- */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.bars i {
+  width: 3px;
+  height: 100%;
+  background: var(--red);
+  transform-origin: bottom;
+  transform: scaleY(0.15);
+}
+
+/* ---------- theme switch: ink spreading from the toggle ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: ink-in 0.75s cubic-bezier(0.7, 0, 0.2, 1);
+}
+@keyframes ink-in {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0%));
+  }
+  to {
+    clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 0%));
+  }
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* a section scrolled out of view parks its loops (set from App) */
+[data-off] *,
+[data-off] *::before,
+[data-off] *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

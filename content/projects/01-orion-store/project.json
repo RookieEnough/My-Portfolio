@@ -1,0 +1,18 @@
+{
+  "title": "Orion Store",
+  "tagline": "The app store with nothing to hide.",
+  "description": "A free, open-source Android app store that pulls builds straight from developers' GitHub, GitLab and Codeberg releases. The whole backend is four public repos and a self-cleaning git branch. No accounts, no servers, no trackers.",
+  "year": "2022 → now",
+  "tags": ["TypeScript", "React", "Capacitor", "GitHub Actions", "Serverless"],
+  "featured": true,
+  "stats": [
+    { "value": "1,260,000", "label": "downloads" },
+    { "value": "3,586", "label": "GitHub stars" },
+    { "value": "1,100", "label": "apps in the catalog" },
+    { "value": "96", "label": "apps rebuilt daily" }
+  ],
+  "links": [
+    { "label": "Visit site", "url": "https://orion-store.pages.dev" },
+    { "label": "Source", "url": "https://github.com/RookieEnough/Orion-Store" }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "title": "Four repos. *Zero* servers. 1.26M installs.",
+  "intro": "Orion Store runs on a single constraint: a $0 budget. No database, no backend, no API bill. So I turned GitHub itself into the CDN and the database, and engineered around every limit that came with it.",
+  "doc": { "label": "Read the architecture doc", "url": "https://rookieenough.github.io/Orion-Docs/" },
+  "pipeline": [
+    { "id": "src", "label": "Releases", "sub": "GitHub · GitLab · Codeberg" },
+    { "id": "bot", "label": "Mirror bot", "sub": "Python · Actions · every 6 h" },
+    { "id": "data", "label": "data branch", "sub": "1 commit · ~500 KB" },
+    { "id": "cdn", "label": "CDN", "sub": "sharded JSON + MessagePack" },
+    { "id": "app", "label": "Orion Store", "sub": "React · Capacitor" },
+    { "id": "users", "label": "1.26M installs", "sub": "Android 7.0+" }
+  ],
+  "side": { "label": "Morphe AutoBuilds", "sub": "patch · sign · publish 96/day", "into": "src" },
+  "decisions": [
+    {
+      "node": "data",
+      "title": "Git as a database, minus the bloat",
+      "problem": "Committing metadata for every app every 6 hours would grow the repo to gigabytes within months. Unusable for clients.",
+      "decision": "Treat the data branch as a snapshot, not a history. CI orphans it and force-pushes a single commit each run.",
+      "result": "1 commit, ~500 KB",
+      "resultNote": "the same size forever, however long the store runs"
+    },
+    {
+      "node": "bot",
+      "title": "Hand out the menu, not the chef",
+      "problem": "GitHub allows 60 unauthenticated API requests an hour. Ten thousand clients asking for updates would be rate-limited instantly.",
+      "decision": "A Python bot spends its own tokens once every 6 hours and compiles every release into one static manifest on the CDN.",
+      "result": "0 API calls",
+      "resultNote": "from clients, at any scale"
+    },
+    {
+      "node": "cdn",
+      "title": "Hierarchical sharding",
+      "problem": "One folder or one JSON for 10,000 apps lags the UI, slows lookups and wastes bandwidth on a single update check.",
+      "decision": "Deterministic buckets derived from the package name, so com.spotify.music lives at mirrors/s/p/spotify.json.",
+      "result": "O(1) lookup",
+      "resultNote": "the client computes the path, no search"
+    },
+    {
+      "node": "app",
+      "title": "Binary manifests",
+      "problem": "Parsing a big JSON version map is slow on low-end Android phones, and update checks have to feel instant.",
+      "decision": "Compile the version map to MessagePack and ship one binary blob for the update check.",
+      "result": "< 12 ms",
+      "resultNote": "to compare versions for 5,000 apps"
+    }
+  ]
+}

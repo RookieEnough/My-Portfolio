@@ -1,0 +1,11 @@
+{
+  "title": "Orion Website",
+  "tagline": "One page, zero build step.",
+  "description": "The official site for Orion Store. It's a single animated page with real-time WebGL, a scroll-driven phone tour and live release stats drawn as a constellation. Plain HTML, CSS and ES modules, every library vendored, and it still works with JavaScript off. Cloudflare Pages redeploys it every six hours to pick up new download counts.",
+  "year": "2026",
+  "tags": ["three.js", "GSAP", "Lenis", "WebGL", "Cloudflare Pages"],
+  "links": [
+    { "label": "Visit site", "url": "https://orion-store.pages.dev" },
+    { "label": "Source", "url": "https://github.com/RookieEnough/Orion-Website" }
+  ]
+}

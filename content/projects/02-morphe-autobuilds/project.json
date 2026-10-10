@@ -1,0 +1,9 @@
+{
+  "title": "Morphe AutoBuilds",
+  "tagline": "A factory that never sleeps.",
+  "description": "A config-driven CI pipeline that patches, signs and publishes Android apps every day without a human touching it. It's the engine behind Orion's daily builds.",
+  "year": "2026",
+  "tags": ["Python", "GitHub Actions", "CI/CD"],
+  "stats": [{ "value": "1.2k", "label": "stars" }],
+  "links": [{ "label": "Source", "url": "https://github.com/RookieEnough/Morphe-AutoBuilds" }]
+}

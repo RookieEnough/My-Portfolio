@@ -1,0 +1,1 @@
+Optional. Drop ollama.svg, hugging-face.png, github.svg ... here to replace the built-in logos on the keyboard keys and contact cards. Name the file after the skill or social. Details in ../README.md

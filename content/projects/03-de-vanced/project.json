@@ -1,0 +1,9 @@
+{
+  "title": "De-Vanced",
+  "tagline": "When the old way broke, I moved everyone.",
+  "description": "A full migration of a patching ecosystem onto Morphe, built so thousands of users kept a clean experience after the old method fell apart.",
+  "year": "2026",
+  "tags": ["Java", "Patching", "Open source"],
+  "stats": [{ "value": "1.3k", "label": "stars" }],
+  "links": [{ "label": "Source", "url": "https://github.com/RookieEnough/De-Vanced" }]
+}

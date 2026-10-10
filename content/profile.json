@@ -1,0 +1,67 @@
+{
+  "name": "Sarthak Sinha",
+  "alias": "RookieZ",
+  "nameJapanese": "サルタク・シンハ",
+  "roles": [
+    "GenAI Engineer",
+    "LLM Systems Architect",
+    "Open-source Developer"
+  ],
+  "location": "Noida, India",
+  "timezone": "Asia/Kolkata",
+  "email": "sarthaksinha5088@gmail.com",
+  "status": "Breaking stuff 🍜",
+  "hero": {
+    "lead": "I architect the system, direct the models and ship the thing. My app store has been downloaded over 1.26 million times. No servers, no trackers, no ads.",
+    "availability": "Open to full-time GenAI and LLM engineering roles on teams that ship to millions."
+  },
+  "hire": {
+    "badge": "Open to work",
+    "looking": "Full-time GenAI / LLM engineering roles",
+    "title": "Add Sarthak to your team",
+    "summary": "wants to merge 4 years of shipping into your-team:main",
+    "checks": [
+      { "value": "1.26M", "title": "Ships at scale", "note": "Built and runs an app store with over a million downloads, end to end." },
+      { "value": "96", "title": "Automates by default", "note": "CI pipelines patch, sign and publish 96 apps a day. Nobody touches them." },
+      { "value": "0", "title": "Designs for near-zero cost", "note": "Orion serves 1.26M installs from public repos and a CDN. Zero servers, zero API bill." },
+      { "value": "3.5k", "title": "Trusted in the open", "note": "Thousands of developers star, fork and audit the code on GitHub." },
+      { "value": "E2E", "title": "Owns the whole stack", "note": "LLM pipelines, backend data layer, Android client, web and CI. Design doc to production." }
+    ],
+    "roles": [
+      "GenAI / LLM Engineer",
+      "AI Systems Architect",
+      "AI Product Engineer",
+      "Full-stack AI Developer"
+    ],
+    "facts": [
+      { "k": "Looking for", "v": "Full-time GenAI / LLM engineering roles" },
+      { "k": "Based in", "v": "Noida, India · IST (UTC+5:30)" },
+      { "k": "Work mode", "v": "Remote, hybrid or on-site in Delhi NCR" },
+      { "k": "Core stack", "v": "Python, TypeScript, LangChain, LlamaIndex, Ollama, FAISS, GitHub Actions" },
+      { "k": "Proof", "v": "1.26M downloads · 3.5k GitHub stars · 96 daily builds" },
+      { "k": "Education", "v": "BCA, IPEM · 2025" }
+    ],
+    "subject": "Opportunity for Sarthak: GenAI Engineer"
+  },
+  "socials": [
+    { "label": "GitHub", "handle": "@RookieEnough", "url": "https://github.com/RookieEnough", "jp": "コード", "verb": "Read the code", "tone": "green" },
+    { "label": "LinkedIn", "handle": "in/rookiez", "url": "https://www.linkedin.com/in/rookiez", "jp": "仕事", "verb": "Connect", "tone": "indigo" },
+    { "label": "X", "handle": "@_Rookie_Z", "url": "https://x.com/_Rookie_Z", "jp": "呟き", "verb": "Follow", "tone": "silver" },
+    { "label": "Discord", "handle": "Orion community", "url": "https://discord.com/invite/e6KQRfzycT", "jp": "仲間", "verb": "Join", "tone": "violet" }
+  ],
+  "modelCard": [
+    { "k": "model", "v": "sarthak-sinha (aka RookieZ)" },
+    { "k": "architecture", "v": "GenAI engineer × systems architect × full-stack developer" },
+    { "k": "trained on", "v": "4 years of shipping, 1.26M downloads of user feedback, an unreasonable amount of anime" },
+    { "k": "fine-tuned for", "v": "Turning prompts into products people actually install" },
+    { "k": "context window", "v": "Whole repos, not snippets" },
+    { "k": "inference", "v": "Fast. Faster on Discord." },
+    { "k": "known limitations", "v": "Cannot stop building at 3 AM. Will open-source it." },
+    { "k": "license", "v": "GPL-3.0, like everything I ship" }
+  ],
+  "education": [
+    { "title": "Bachelor of Computer Applications", "place": "IPEM", "period": "2022 → 2025" },
+    { "title": "AI & Machine Learning Foundations", "place": "Certification", "period": "" },
+    { "title": "Cybersecurity & Network Defense", "place": "Certification", "period": "" }
+  ]
+}

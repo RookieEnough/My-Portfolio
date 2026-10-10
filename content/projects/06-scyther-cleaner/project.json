@@ -1,0 +1,8 @@
+{
+  "title": "Scyther Cleaner",
+  "tagline": "Your C: drive, but lighter.",
+  "description": "A small, sharp Windows utility that hunts down junk files and reclaims disk space, built with memory and I/O efficiency in mind.",
+  "year": "2025",
+  "tags": ["Windows", "CLI", "Systems"],
+  "links": [{ "label": "Source", "url": "https://github.com/RookieEnough/Scyther-Cleaner" }]
+}

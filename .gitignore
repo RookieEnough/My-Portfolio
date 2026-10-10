@@ -1,0 +1,72 @@
+# Only source goes up: code, content/, docs and config. Everything here is rebuilt,
+# machine-specific or private, and the CI rebuilds the site from scratch anyway.
+
+# dependencies (npm only: package-lock.json is the one lockfile CI installs from)
+node_modules/
+.pnpm-store/
+.yarn/
+.pnp.*
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+bun.lockb
+*.tgz
+
+# build output and tool caches
+dist/
+dist-ssr/
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+.cache/
+.temp/
+.tmp/
+.eslintcache
+.stylelintcache
+coverage/
+stats.html
+
+# hosting CLIs (local state and credentials)
+.wrangler/
+.vercel/
+.netlify/
+.firebase/
+
+# secrets and local env
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+
+# logs
+*.log
+*-debug.log*
+
+# loose files at the root: the résumé the site serves lives in content/
+/*.pdf
+
+# OS clutter
+.DS_Store
+._*
+.Spotlight-V100/
+.Trashes/
+.fseventsd/
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.history/
+*.sublime-workspace
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+*.tmp

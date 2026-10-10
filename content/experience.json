@@ -1,0 +1,38 @@
+[
+  {
+    "role": "Lead Software Architect & AI Systems Engineer",
+    "org": "Orion Store",
+    "period": "2022 → now",
+    "points": [
+      "Architected and scaled Orion Store past 1.26M downloads on a fully serverless backend.",
+      "Built CI pipelines on GitHub Actions that patch, sign and publish 96 apps daily.",
+      "Shipped local LLM tooling with Ollama and Hugging Face for task generation and code analysis."
+    ]
+  },
+  {
+    "role": "GenAI Engineer, RAG Sandboxes",
+    "org": "Emerging Tech & AI Initiatives",
+    "period": "2023 → now",
+    "points": [
+      "Built interactive sandboxes that pair open-source LLMs with vector search for real-time RAG and semantic search.",
+      "Wired local inference on Ollama and Hugging Face into them, so everything runs on-device with no API keys."
+    ]
+  },
+  {
+    "role": "IT Executive & Systems Administrator",
+    "org": "Lloyd Group of Institutions",
+    "period": "now",
+    "points": [
+      "Run high-density network infrastructure and enterprise computing environments.",
+      "Deploy local compute servers, virtual environments and secure access policies."
+    ]
+  },
+  {
+    "role": "IT Support Specialist & Tech Ops Lead",
+    "org": "College Sahayata",
+    "period": "2023 → 2024",
+    "points": [
+      "Managed core tech operations, internal networking and automated database backups."
+    ]
+  }
+]

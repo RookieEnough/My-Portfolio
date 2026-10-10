@@ -1,0 +1,2 @@
+Drop .mp3 / .ogg / .wav / .m4a / .flac files here. They play in file-name order.
+Add an image with the same name (rain.mp3 + rain.jpg) to print it on the disc. See ../README.md

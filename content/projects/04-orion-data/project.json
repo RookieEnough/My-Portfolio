@@ -1,0 +1,8 @@
+{
+  "title": "Orion Data",
+  "tagline": "A database anyone can audit.",
+  "description": "The warehouse behind Orion Store: more than 1,100 app listings kept as plain JSON in a public repo. Anyone can inspect a listing or propose an edit.",
+  "year": "2025",
+  "tags": ["Python", "JSON", "Data pipelines"],
+  "links": [{ "label": "Source", "url": "https://github.com/RookieEnough/Orion-Data" }]
+}
